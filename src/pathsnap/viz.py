@@ -11,6 +11,26 @@ from .io import Trip
 COLORS = dict(gps="#1f77b4", network="#9e9e9e", route="#2ca02c", pred="#d62728", wrong="#ff7f0e",
               baseline="#9467bd")
 
+# Base maps, first = default. OpenStreetMap's own tile servers reject browser requests without an HTTP
+# Referer, which is what happens when a saved .html map is opened from disk (file://) or in browsers that
+# strip referrers, so a provider without that restriction is the default; OSM stays selectable.
+BASEMAPS = [
+    ("Esri World Street Map",
+     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+     "Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, USGS, NGA, EPA, USDA, NPS"),
+    ("CARTO Light", "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+     "&copy; OpenStreetMap contributors &copy; CARTO"),
+    ("OpenStreetMap", "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "&copy; OpenStreetMap contributors"),
+]
+
+
+def base_map() -> folium.Map:
+    """A folium.Map with the BASEMAPS as switchable base layers (Esri first, shown by default)."""
+    m = folium.Map(tiles=None, control_scale=True)
+    for i, (name, url, attr) in enumerate(BASEMAPS):
+        folium.TileLayer(tiles=url, attr=attr, name=name, max_zoom=19, show=(i == 0)).add_to(m)
+    return m
+
 
 def nearby_arc_ids(trip: Trip, buffer_m: float = 150.0) -> np.ndarray:
     """Arcs with at least one endpoint within buffer_m of any GPS point."""
@@ -63,7 +83,7 @@ def trip_map(trip: Trip, predicted_route=None, wrong_points=None, buffer_m: floa
              baseline_label: str = "Classifier-only route", predicted_label: str = "Predicted route",
              stats_html: str | None = None) -> folium.Map:
     lat, lon = trip.track.lat.values, trip.track.lon.values
-    m = folium.Map(tiles="OpenStreetMap", control_scale=True)
+    m = base_map()
     legend = {}
 
     net = folium.FeatureGroup(name="Road network (nearby)", show=True)

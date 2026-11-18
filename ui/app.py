@@ -18,6 +18,17 @@ st.set_page_config(page_title="PathSnap", page_icon="🗺️", layout="wide")
 
 DEFAULT_API = os.environ.get("PATHSNAP_API", "http://localhost:8000")
 
+# Base maps, first = default. OpenStreetMap's own servers block browsers that send no Referer (some
+# browsers and privacy settings strip it), so Esri is the default and OSM stays selectable.
+BASEMAPS = [
+    ("Esri World Street Map",
+     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+     "Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, USGS, NGA, EPA, USDA, NPS"),
+    ("CARTO Light", "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+     "&copy; OpenStreetMap contributors &copy; CARTO"),
+    ("OpenStreetMap", "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "&copy; OpenStreetMap contributors"),
+]
+
 with st.sidebar:
     st.header("Connection")
     api = st.text_input("API address (Laptop 1)", value=st.session_state.get("api", DEFAULT_API)).rstrip("/")
@@ -80,7 +91,9 @@ if res:
 
     gps = res["gps"]
     lats, lons = [p[0] for p in gps], [p[1] for p in gps]
-    fmap = folium.Map(tiles="OpenStreetMap", control_scale=True)
+    fmap = folium.Map(tiles=None, control_scale=True)
+    for i, (name, url, attr) in enumerate(BASEMAPS):
+        folium.TileLayer(tiles=url, attr=attr, name=name, max_zoom=19, show=(i == 0)).add_to(fmap)
     fg_gps = folium.FeatureGroup(name="GPS observations")
     for la, lo in gps:
         folium.CircleMarker((la, lo), radius=1.5, color="#1f77b4", fill=True, fill_opacity=0.5, weight=0).add_to(fg_gps)
