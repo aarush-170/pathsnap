@@ -51,13 +51,13 @@ Results from a quick check of all 90 trips:
 - [x] **Folium maps**: `results/maps/eda_train_00000095.html` and `eda_anomaly_train_00000054.html`
 - [x] Figures saved to `results/figures/eda_*.png`
 
-## Phase 2: Labels and candidate generation
-`labels.py`, `candidates.py`, `network.py`
+## Phase 2: Labels and candidate generation. ✅ Done
+`labels.py`, `spatial.py`, `candidates.py`, `scripts/build_dataset.py`, `tests/test_phase2.py`. Notes for the report are in `results/logs/phase2_notes.md`.
 
-- [ ] **Per-point labels from the route.** Align GPS points to route arcs in order with dynamic programming: the route index can never go backwards, and the cost is the point-to-arc distance. This avoids snapping a point to a parallel arc the route only visits later. Flag points too far from any route arc (more than about 60 m) as unlabelled.
-- [ ] **Candidates.** Project to metres, then build a spatial index of arc segments (KD-tree on arc midpoints plus an exact point-to-segment distance check). For each point, keep arcs within radius R, top K by distance.
-- [ ] **Choose R and K** from the curve of candidate miss rate vs average number of candidates on train. Report the miss rate.
-- [ ] Output: one row per (trip, point, candidate) in a table at `data/processed/candidates_{split}.parquet`
+- [x] **Per-point labels from the route.** Order-preserving DP alignment. The cost is distance to the arc plus λ·|route progress − GPS displacement|. Points more than 50 m from every route arc are left unlabelled, and short runs (< 30 points) cut off by a backward jump of more than 10 arcs are unlabelled too.
+- [x] **Candidates.** Arcs are densified every 10 m into a KD-tree, then exact point-to-segment distances are computed. Keep arcs within R, cut off at distance rank K (the two directions of a street always share a rank).
+- [x] **Choose R and K** from the sweep (`candidate_sweep.csv`, `candidates_miss_rate.png`): **R = 50 m, K = 12**, giving a miss rate of 0.59% on train and 0.07% on student_test, with about 7–8 candidates per point.
+- [x] Output: `data/processed/{labels,candidates}_{split}.parquet`. Not committed; rebuild with `python -m scripts.build_dataset` (about 45 s).
 
 ## Phase 3: Feature engineering
 `features.py`

@@ -13,11 +13,13 @@ geo:
   projection: local_equirectangular   # metres, centred per trip; alt: UTM zone 32N (EPSG:32632)
 
 candidates:
-  radius_m: 50          # TBD: choose from candidate-miss-rate vs. candidate-count curve
-  max_k: 8              # TBD
+  radius_m: 50          # from candidate sweep (results/logs/candidate_sweep.csv)
+  max_k: 12             # distance-rank cutoff: train miss 0.59%, student_test 0.07%, ~7-8 candidates/point
 
 labels:
   method: monotonic_alignment   # DP alignment of GPS points to ordered .route arcs
+  max_dist_m: 50.0              # points farther than this from every route arc are left unlabelled
+  progress_weight: 0.1          # weight on |route progress - GPS displacement| between consecutive points
 
 cv:
   n_splits: 5
