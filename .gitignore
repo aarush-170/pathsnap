@@ -31,3 +31,6 @@ Thumbs.db
 
 # Local hand-off bundles for teammates
 handoff_hmm/
+
+# Local tool config
+.claude/

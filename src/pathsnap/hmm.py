@@ -94,6 +94,29 @@ class RoadGraph:
         return out[::-1]
 
 
+def reconstruct_route(graph: RoadGraph, point_arcs: np.ndarray, cutoff: float = 2000.0) -> list[int]:
+    """Turn a per-point arc sequence into a drivable route.
+
+    Consecutive duplicates are collapsed. Where two consecutive arcs are not joined head-to-tail, the
+    shortest connecting path is inserted (short arcs that no 1 Hz GPS point landed on). If no path
+    exists within `cutoff` metres, the route is left broken there (-1 marker) rather than invented.
+    """
+    seq = [int(a) for a in point_arcs if a >= 0]
+    seq = [a for i, a in enumerate(seq) if i == 0 or a != seq[i - 1]]
+    out: list[int] = []
+    for i, a in enumerate(seq):
+        if i:
+            prev = out[-1] if out and out[-1] >= 0 else seq[i - 1]
+            if graph.arcs[prev, 1] != graph.arcs[a, 0]:
+                fill = graph.path_arcs(prev, a, cutoff)
+                if fill is None:
+                    out.append(-1)
+                else:
+                    out.extend(fill)
+        out.append(a)
+    return out
+
+
 def decode_trip(graph: RoadGraph, P: np.ndarray, ts: np.ndarray, cands: pd.DataFrame, prob: np.ndarray,
                 params: HMMParams) -> tuple[pd.Series, dict]:
     """Viterbi decoding of one trip.

@@ -132,8 +132,8 @@ Original design:
 - Tune β and the gap threshold on train and student_test only.
 - Compare **classifier-only argmax** with **classifier + HMM** on Top-1 accuracy, continuity, and sequence-level metrics (precision/recall of route arcs, edit distance). Include worked examples where the HMM helped and where it made things worse.
 
-## Phase 7: Folium visualisation (feeds report §6)
-`scripts/make_maps.py`, output in `results/maps/*.html`
+## Phase 7: Folium visualisation (feeds report §6). ✅ Done
+`scripts/make_maps.py`, output in `results/maps/route_<trip>.html` and `results/figures/map_<trip>.png`. Notes are in `results/logs/phase7_notes.md`. Maps for trips 77 (hardest), 40 (typical) and 7 (best); the classifier-only layer can be toggled for a before/after view.
 
 - Layers: raw GPS (blue dots), nearby road network (grey), reference route (green), predicted route (red), and points the model got wrong (orange). Add a legend, a LayerControl, and fit_bounds to the trip.
 

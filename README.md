@@ -60,7 +60,7 @@ _(Commands will be filled in as each stage is implemented.)_
 | Train & compare models | `python -m scripts.train_models` (one model: `--models lightgbm`; table/plots only: `--report`; smoke test: `--sample 0.03`) |
 | Bayesian optimisation | `python -m scripts.tune_optuna` (run used `--trials 20 --timeout 2700`; refit/compare only: `--final-only`) |
 | HMM evaluation | `python -m scripts.eval_hmm` |
-| Folium maps | `python -m scripts.make_maps` |
+| Folium maps | `python -m scripts.make_maps` (all student_test trips: `--all`) |
 | Export artifacts | `python -m scripts.export_artifacts` |
 | API (Laptop 1) | `uvicorn api.main:app --host 0.0.0.0 --port 8000` |
 | UI (Laptop 2) | `streamlit run ui/app.py` |

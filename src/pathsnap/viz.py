@@ -8,7 +8,8 @@ from scipy.spatial import cKDTree
 from .geo import LocalProjector
 from .io import Trip
 
-COLORS = dict(gps="#1f77b4", network="#9e9e9e", route="#2ca02c", pred="#d62728", wrong="#ff7f0e")
+COLORS = dict(gps="#1f77b4", network="#9e9e9e", route="#2ca02c", pred="#d62728", wrong="#ff7f0e",
+              baseline="#9467bd")
 
 
 def nearby_arc_ids(trip: Trip, buffer_m: float = 150.0) -> np.ndarray:
@@ -28,11 +29,16 @@ def _arc_latlon(trip: Trip, arc_ids):
 
 
 def _route_polyline(trip: Trip, arc_ids):
-    """Chain consecutive arcs into polylines, starting a new one at each break."""
+    """Chain consecutive arcs into polylines, starting a new one at each break (or -1 marker)."""
     lines, cur = [], []
     for i, a in enumerate(arc_ids):
+        if a < 0:
+            if cur:
+                lines.append(cur)
+            cur = []
+            continue
         u, v = trip.arcs[a]
-        if cur and trip.arcs[arc_ids[i - 1], 1] != u:
+        if cur and (arc_ids[i - 1] < 0 or trip.arcs[arc_ids[i - 1], 1] != u):
             lines.append(cur)
             cur = []
         if not cur:
@@ -53,7 +59,9 @@ def _legend(items: dict[str, str]) -> folium.Element:
 
 
 def trip_map(trip: Trip, predicted_route=None, wrong_points=None, buffer_m: float = 150.0,
-             max_gps_markers: int = 3000, title: str | None = None) -> folium.Map:
+             max_gps_markers: int = 3000, title: str | None = None, baseline_route=None,
+             baseline_label: str = "Classifier-only route", predicted_label: str = "Predicted route",
+             stats_html: str | None = None) -> folium.Map:
     lat, lon = trip.track.lat.values, trip.track.lon.values
     m = folium.Map(tiles="OpenStreetMap", control_scale=True)
     legend = {}
@@ -71,17 +79,24 @@ def trip_map(trip: Trip, predicted_route=None, wrong_points=None, buffer_m: floa
         fg.add_to(m)
         legend["Reference route"] = COLORS["route"]
 
+    if baseline_route is not None:
+        fg = folium.FeatureGroup(name=baseline_label, show=False)
+        for line in _route_polyline(trip, np.asarray(baseline_route)):
+            folium.PolyLine(line, color=COLORS["baseline"], weight=3, opacity=0.9, dash_array="2 6").add_to(fg)
+        fg.add_to(m)
+        legend[baseline_label + " (toggle on)"] = COLORS["baseline"]
+
     if predicted_route is not None:
-        fg = folium.FeatureGroup(name="Predicted route", show=True)
+        fg = folium.FeatureGroup(name=predicted_label, show=True)
         for line in _route_polyline(trip, np.asarray(predicted_route)):
             folium.PolyLine(line, color=COLORS["pred"], weight=3, opacity=0.9, dash_array="6").add_to(fg)
         fg.add_to(m)
-        legend["Predicted route"] = COLORS["pred"]
+        legend[predicted_label] = COLORS["pred"]
 
     gps = folium.FeatureGroup(name="GPS observations", show=True)
     step = max(1, len(lat) // max_gps_markers)
     for i in range(0, len(lat), step):
-        folium.CircleMarker((lat[i], lon[i]), radius=2, color=COLORS["gps"], fill=True, fill_opacity=0.8,
+        folium.CircleMarker((lat[i], lon[i]), radius=1.5, color=COLORS["gps"], fill=True, fill_opacity=0.45,
                             weight=0, tooltip=f"#{i}  t={trip.track.t.iat[i]:.0f}s").add_to(gps)
     gps.add_to(m)
     legend["GPS observation" + (f" (every {step})" if step > 1 else "")] = COLORS["gps"]
@@ -99,8 +114,9 @@ def trip_map(trip: Trip, predicted_route=None, wrong_points=None, buffer_m: floa
     m.fit_bounds([[lat.min(), lon.min()], [lat.max(), lon.max()]])
     folium.LayerControl(collapsed=False).add_to(m)
     m.get_root().html.add_child(_legend(legend))
-    if title:
+    if title or stats_html:
         m.get_root().html.add_child(folium.Element(
-            f'<div style="position:fixed;top:10px;left:60px;z-index:9999;background:white;padding:4px 8px;'
-            f'border:1px solid #999;font:bold 14px sans-serif">{title}</div>'))
+            f'<div style="position:fixed;top:10px;left:60px;z-index:9999;background:white;padding:6px 10px;'
+            f'border:1px solid #999;border-radius:4px;font:13px sans-serif">'
+            f'{f"<b>{title}</b>" if title else ""}{f"<br>{stats_html}" if stats_html else ""}</div>'))
     return m
