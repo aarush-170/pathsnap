@@ -68,3 +68,13 @@ _(Commands will be filled in as each stage is implemented.)_
 | Export artifacts | `python -m scripts.export_artifacts` |
 | API (Laptop 1) | `uvicorn api.main:app --host 0.0.0.0 --port 8000` |
 | UI (Laptop 2) | `streamlit run ui/app.py` |
+
+
+## Team Members
+
+| Name | SRN | Class |
+|---|---|---|
+| Aniket Sen | PES1UG24CS062  | 5A |
+| Anirudh Ganesh Prabhu | PES1UG24CS063 | 5A |
+| Aashlesh P | PES1UG24CS011 | 5A |
+| Aarush Muralidhara | PES1UG24CS010 | 5A |
