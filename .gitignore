@@ -1,0 +1,30 @@
+# Raw / derived data (too large; see README for where to place it)
+data/raw/
+data/processed/*
+data/eval/*
+!data/**/.gitkeep
+
+# Organiser reference material (not ours to redistribute)
+docs/reference/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Large intermediate artifacts (keep final model artifacts in models/)
+*.parquet
+*.npz
+models/*.tmp
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets
+.env

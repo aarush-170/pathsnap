@@ -1,0 +1,34 @@
+# Central configuration. Values marked TBD are decided by experiments (see PLAN.md).
+seed: 42
+
+paths:
+  raw_train: data/raw/train
+  raw_student_test: data/raw/student_test
+  raw_eval: data/eval            # evaluator trips, placed on the API laptop only
+  processed: data/processed
+  models: models
+  results: results
+
+geo:
+  projection: local_equirectangular   # metres, centred per trip; alt: UTM zone 32N (EPSG:32632)
+
+candidates:
+  radius_m: 50          # TBD: choose from candidate-miss-rate vs. candidate-count curve
+  max_k: 8              # TBD
+
+labels:
+  method: monotonic_alignment   # DP alignment of GPS points to ordered .route arcs
+
+cv:
+  n_splits: 5
+  group: trip_id
+
+hmm:
+  sigma_emission: null  # TBD (if using distance-based emission as a fallback)
+  beta_transition: null # TBD, tuned on train / student_test only
+  max_route_factor: 5.0
+  gap_break_seconds: 60 # TBD
+
+api:
+  host: 0.0.0.0
+  port: 8000
