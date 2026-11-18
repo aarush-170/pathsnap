@@ -22,17 +22,19 @@ labels:
   progress_weight: 0.1          # weight on |route progress - GPS displacement| between consecutive points
 
 model:
-  selected: lightgbm    # Phase 4 decision (results/logs/phase4_notes.md); tuned in Phase 5
+  selected: lightgbm    # Phase 4 decision (results/logs/phase4_notes.md)
+  params_file: configs/lightgbm_tuned.json   # Phase 5 Optuna best (trial 8)
 
 cv:
   n_splits: 5
   group: trip_id
 
 hmm:
-  sigma_emission: null  # TBD (if using distance-based emission as a fallback)
-  beta_transition: null # TBD, tuned on train / student_test only
-  max_route_factor: 5.0
-  gap_break_seconds: 60 # TBD
+  beta: 5.0             # metres; chosen on student_test (results/logs/phase6_notes.md)
+  alpha: 0.5            # emission weight; only alpha*beta matters (best ~2.5)
+  route_factor: 3.0     # Dijkstra cut-off = route_factor * d_gps + route_slack_m
+  route_slack_m: 200.0
+  gap_break_seconds: 60
 
 api:
   host: 0.0.0.0

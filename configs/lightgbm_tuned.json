@@ -1,0 +1,72 @@
+{
+  "params": {
+    "learning_rate": 0.01269170486999142,
+    "n_estimators": 650,
+    "num_leaves": 228,
+    "min_child_samples": 188,
+    "subsample": 0.8231905839874377,
+    "colsample_bytree": 0.5598138475638506,
+    "reg_lambda": 0.12997381150693554,
+    "reg_alpha": 0.0024213554893651656,
+    "subsample_freq": 1
+  },
+  "cv_log_loss": 0.07616842776906499,
+  "best_trial": 8,
+  "cv_top1": 0.8917085022034404,
+  "n_trials": 14,
+  "n_complete": 11,
+  "n_pruned": 3,
+  "search_space": {
+    "learning_rate": [
+      "float",
+      0.01,
+      0.2,
+      "log"
+    ],
+    "n_estimators": [
+      "int",
+      100,
+      800,
+      "step 50"
+    ],
+    "num_leaves": [
+      "int",
+      15,
+      255,
+      "log"
+    ],
+    "min_child_samples": [
+      "int",
+      10,
+      500,
+      "log"
+    ],
+    "subsample": [
+      "float",
+      0.5,
+      1.0,
+      "linear"
+    ],
+    "colsample_bytree": [
+      "float",
+      0.4,
+      1.0,
+      "linear"
+    ],
+    "reg_lambda": [
+      "float",
+      0.001,
+      10.0,
+      "log"
+    ],
+    "reg_alpha": [
+      "float",
+      0.001,
+      10.0,
+      "log"
+    ]
+  },
+  "objective": "mean 5-fold trip-grouped validation log loss",
+  "sampler": "TPE seed 42",
+  "pruner": "MedianPruner"
+}

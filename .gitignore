@@ -28,3 +28,6 @@ Thumbs.db
 
 # Secrets
 .env
+
+# Local hand-off bundles for teammates
+handoff_hmm/

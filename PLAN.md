@@ -102,16 +102,19 @@ Results from a quick check of all 90 trips:
   - MLP train/validation loss curves only
 - **Selection criteria:** test Top-1, then Macro F1, then probability quality (log loss), then speed and stability across folds.
 
-## Phase 5: Bayesian hyperparameter optimisation (feeds report §4)
-`scripts/tune_optuna.py`
+## Phase 5: Bayesian hyperparameter optimisation (feeds report §4). ✅ Done
+`scripts/tune_optuna.py`. Notes are in `results/logs/phase5_notes.md`.
 
-- [ ] Optuna TPE on the chosen model, 50–100 trials, with GroupKFold on train. The objective is CV log loss or Top-1, documented in the report.
-- [ ] Justify the search space, for example for LightGBM: `num_leaves`, `learning_rate`, `min_child_samples`, `feature_fraction`, `lambda_l2`, `n_estimators`.
-- [ ] Save the trials CSV, optimisation history and parameter-importance plots.
-- [ ] Refit on all of train, then compare tuned vs untuned with the same metrics and data splits.
+- [x] Optuna TPE on LightGBM over 8 hyperparameters, with the same trip-grouped 5 folds. The objective is CV log loss. Ran 14 trials in a 45-minute budget (11 completed, 3 pruned); trial 0 was the untuned config.
+- [x] Saved the trials CSV, history, parameter-importance and slice plots, and `configs/lightgbm_tuned.json`.
+- [x] Tuned vs untuned: CV log loss 0.0769 → 0.0762 (better in all 5 folds), test Top-1 0.8931 → 0.8937, and **after the HMM 0.9404 → 0.9498**.
 
-## Phase 6: HMM and Viterbi (feeds report §5)
-`hmm.py`, `scripts/eval_hmm.py`
+## Phase 6: HMM and Viterbi (feeds report §5). ✅ Done
+`src/pathsnap/hmm.py`, `scripts/eval_hmm.py`, `tests/test_hmm.py`. Notes are in `results/logs/phase6_notes.md`.
+
+**Result on student_test (tuned LightGBM):** Top-1 **0.8937 → 0.9498**, continuity 0.834 → 0.913. All 10 trips improved. Best β = 5, α = 0.5; only α·β matters.
+
+Original design:
 
 - **Hidden states:** the candidate arcs for each GPS point.
 - **Emission:** log of the classifier probability, normalised per point.
