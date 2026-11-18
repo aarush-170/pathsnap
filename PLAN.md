@@ -144,8 +144,8 @@ Original design:
 
 - `models/classifier.joblib` (or `.pt`), `models/feature_config.json`, `models/hmm_config.json`, and any scaler. Keep them small enough for GitHub.
 
-## Phase 9: API (Laptop 1) and UI (Laptop 2) (feeds report §7). ✅ Built and tested on one machine
-`api/main.py` (FastAPI: /health, /trips, /predict, with a console log per request), `ui/app.py` (Streamlit: trip picker, metrics, Folium map, HMM on/off toggle). Two-laptop steps are in `docs/DEPLOYMENT.md`. Tested end to end against student_test trips: same numbers as Phase 8. **Still to do: rehearse across two laptops on the evaluation network.**
+## Phase 9: API (Laptop 1) and UI (Laptop 2) (feeds report §7). ✅ Done
+`api/main.py` (FastAPI: /health, /trips, /predict, with a console log per request), `ui/app.py` (Streamlit: trip picker, metrics, Folium map, HMM on/off toggle). Two-laptop steps are in `docs/DEPLOYMENT.md`. Tested end to end against student_test trips: same numbers as Phase 8. **Rehearsed on two laptops over a phone hotspot** (screenshots in report §7).
 `api/main.py`, `ui/app.py`
 
 **API (FastAPI), endpoints:**
@@ -173,17 +173,18 @@ Original design:
 - Allow port 8000 through the Windows firewall.
 - Test across two machines on the same Wi-Fi beforehand, and try all 10 trip IDs.
 
-## Phase 10: Report and submission. 🟡 Report built; submission steps left
+## Phase 10: Report and submission. ✅ Done
 `report/build_report.py` builds `report/PathSnap_Technical_Report.pdf` (18 pages, Deliverables §2–8, every number read from `results/`).
 
-Still to do:
-- **Two-laptop rehearsal**, adding to report §7 the screenshots of the UI on laptop 2 and the API CMD log on laptop 1.
-- **Make the repo public.**
-- **Each member reviews their sections for the viva.**
+Done:
+- Two-laptop rehearsal, with screenshots of the UI on laptop 2 and the API CMD log on laptop 1 in report §7.
+- Repo made public.
+
+Remaining (team): every member reviews their sections for the viva.
 
 Original checklist:
 - [ ] PDF following Deliverables §2–7. Every table and figure comes from `results/`.
-- [ ] Make the repo public, with a README containing exact run commands.
+- [x] Make the repo public, with a README containing exact run commands.
 - [ ] AI-use disclosure, as required by the event policy.
 - [ ] Every team member rehearses viva answers for each phase.
 

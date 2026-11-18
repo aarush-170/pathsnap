@@ -63,7 +63,7 @@ The UI never receives the reference route: the API returns only the predicted ro
 |---|---|
 | The UI says "Cannot reach the API" | Check the IP (run `ipconfig` again, since it changes when you switch networks). Check the API window is still running. Check the firewall rule. |
 | It works on Laptop 1 (`localhost`) but not from Laptop 2 | The network blocks device-to-device traffic. Put both laptops on a **phone hotspot**. |
-| Laptop 2's browser can't open `http://<IP>:8000/health` | Same as above: firewall or network isolation. |
+| Laptop 2's browser can't open `http://<IP>:8000/health` (connection **times out**) even on the same hotspot | Windows treats the hotspot as a **Public** network, and Python is only allowed through the firewall on Private networks. On Laptop 1: *Settings → Network & internet → Wi-Fi → (the hotspot) → Network profile type → **Private***. This fixed our rehearsal. |
 | "unknown trip_id" | The `data/eval/` folder names must be the 8-digit trip ids. |
 | Slow first request | Normal. The first request loads trips from disk; trips take 0.4–3.5 s each. |
 

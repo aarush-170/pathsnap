@@ -16,7 +16,7 @@ from streamlit_folium import st_folium
 
 st.set_page_config(page_title="PathSnap", page_icon="🗺️", layout="wide")
 
-DEFAULT_API = os.environ.get("PATHSNAP_API", "http://localhost:8000")
+DEFAULT_API = os.environ.get("PATHSNAP_API", "http://localhost:8000").strip()
 
 # Base maps, first = default. OpenStreetMap's own servers block browsers that send no Referer (some
 # browsers and privacy settings strip it), so Esri is the default and OSM stays selectable.
@@ -31,7 +31,7 @@ BASEMAPS = [
 
 with st.sidebar:
     st.header("Connection")
-    api = st.text_input("API address (Laptop 1)", value=st.session_state.get("api", DEFAULT_API)).rstrip("/")
+    api = st.text_input("API address (Laptop 1)", value=st.session_state.get("api", DEFAULT_API)).strip().rstrip("/")
     st.session_state["api"] = api
     try:
         h = requests.get(f"{api}/health", timeout=5).json()

@@ -56,6 +56,8 @@ data/raw/student_test/<trip_id>/<trip_id>.{track,nodes,arcs,route}
 
 ## Running
 
+Run the stages in this order. Each one reads the previous stage's outputs.
+
 _(Commands will be filled in as each stage is implemented.)_
 
 | Stage | Command |
@@ -67,7 +69,7 @@ _(Commands will be filled in as each stage is implemented.)_
 | Unit tests | `python -m pytest -q tests` |
 | Train & compare models | `python -m scripts.train_models` (one model: `--models lightgbm`; table/plots only: `--report`; smoke test: `--sample 0.03`) |
 | Bayesian optimisation | `python -m scripts.tune_optuna` (run used `--trials 20 --timeout 2700`; refit/compare only: `--final-only`) |
-| HMM evaluation | `python -m scripts.eval_hmm` |
+| HMM evaluation | `python -m scripts.eval_hmm --preds results/models/lightgbm_tuned/pred_student_test.parquet --grid` (the predictions file is written by `tune_optuna`) |
 | Folium maps | `python -m scripts.make_maps` (all student_test trips: `--all`) |
 | Technical report PDF | `python report/build_report.py` |
 | Export artifacts | `python -m scripts.export_artifacts` (re-check only: `--verify-only`; evaluator run-check, no scoring: `--check-eval`) |
