@@ -1,11 +1,4 @@
-## Team Members
 
-| Name | SRN | Class |
-|---|---|---|
-| Aniket Sen | PES1UG24CS062  | 5A |
-| Anirudh Ganesh Prabhu | PES1UG24CS063 | 5A |
-| Aashlesh P | PES1UG24CS011 | 5A |
-| Aarush Muralidhara | PES1UG24CS010 | 5A |
 
 
 # PathSnap — Distributed Map-Matching & Route Reconstruction
