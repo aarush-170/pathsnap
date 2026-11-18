@@ -531,8 +531,6 @@ def build(D):
 
     # ----- 7 API / UI
     ex, ev = D["export"], D["evalrun"]
-    log_txt = (RFIG / "api_log_excerpt_student_test.txt").read_text(encoding="utf-8").strip().splitlines()
-    log_txt = "<br/>".join(l.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") for l in log_txt)
     s += [P("7. API, UI and Deployment", H2),
           P("<b>Architecture.</b> Laptop 1 runs the FastAPI service (<font face='Courier'>api/main.py</font>) with the "
             "exported model (<font face='Courier'>models/lightgbm_tuned.txt</font>, "
@@ -547,15 +545,22 @@ def build(D):
             f"{ex.total_s.min():.1f}-{ex.total_s.max():.1f} s per trip. A run-check on all 10 evaluator trips (prediction "
             f"only, nothing scored) completed without errors in {ev.total_s.min():.1f}-{ev.total_s.max():.1f} s per trip, "
             f"each with a continuous route."),
-          fig(RFIG / "ui_trip40.jpg", "Figure 7.1. Evaluator UI (Laptop 2) after running a prediction: Top-1, gain over "
-              "classifier only, correct points, continuity, route F1, processing time and the predicted route on a map. "
-              "Captured against a local test API serving the student_test trips.", PAGE_W * 0.9),
-          P("API console log for the same request (test server, student_test trip):", BODY),
-          Paragraph(log_txt, MONO),
-          P("<b>[Add before submission]</b> Screenshots from the two-laptop demo: (1) the UI on Laptop 2 showing an "
-            "evaluator trip, and (2) the API console (CMD) on Laptop 1 showing the successful POST /predict requests, "
-            "as required by the deliverables.", BODY.clone("ADD", backColor=colors.HexColor("#fff4e5"),
-                                                             borderPadding=(5, 6, 5, 6))),
+          (fig(RFIG / "ui_laptop2.png", "Figure 7.1. Evaluator UI on Laptop 2 during the two-laptop demo, after "
+               "running a prediction on an evaluation trip.", PAGE_W * 0.9)
+           if (RFIG / "ui_laptop2.png").exists() else
+           fig(RFIG / "ui_trip40.jpg", "Figure 7.1. Evaluator UI (Laptop 2) after running a prediction: Top-1, gain over "
+               "classifier only, correct points, continuity, route F1, processing time and the predicted route on a "
+               "map. Captured against a local test API serving the student_test trips.", PAGE_W * 0.9)),
+          fig(RFIG / "api_cmd_laptop1.png",
+              "Figure 7.2. API console (CMD) on Laptop 1 during the two-laptop demo over a phone hotspot. Laptop 2 "
+              "(172.20.10.3) calls GET /health and POST /predict for evaluation trip 00000015; Laptop 1 (172.20.10.2) "
+              "runs the full pipeline (6,854 GPS points, 47,086 candidates, 2.43 s), scores it server-side and returns "
+              "HTTP 200. The accuracy shown was observed only in this demo run and was not used for any development "
+              "decision.", PAGE_W),
+          (Spacer(1, 1) if (RFIG / "ui_laptop2.png").exists() else
+           P("<b>[Add before submission]</b> Screenshot of the UI on Laptop 2 from the two-laptop demo "
+             "(save it as report/figures/ui_laptop2.png and rebuild; it then replaces Figure 7.1 automatically).",
+             BODY.clone("ADD", backColor=colors.HexColor("#fff4e5"), borderPadding=(5, 6, 5, 6)))),
           PageBreak()]
 
     # ----- 8 integrity
