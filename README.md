@@ -59,6 +59,7 @@ _(Commands will be filled in as each stage is implemented.)_
 
 | Stage | Command |
 |---|---|
+| EDA (stats, figures, Folium maps) | `python -m scripts.eda` |
 | Build candidate dataset | `python -m scripts.build_dataset` |
 | Train & compare models | `python -m scripts.train_models` |
 | Bayesian optimisation | `python -m scripts.tune_optuna` |

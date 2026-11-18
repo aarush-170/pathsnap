@@ -38,18 +38,18 @@ Results from a quick check of all 90 trips:
 
 ---
 
-## Phase 1: EDA (feeds report §2)
-`notebooks/01_eda.ipynb`, plus `src/pathsnap/io.py` and `geo.py`
+## Phase 1: EDA (feeds report §2). ✅ Done
+`scripts/eda.py`, plus `src/pathsnap/io.py`, `geo.py`, `network.py` and `viz.py`. Findings and decisions are in `results/logs/eda_notes.md`.
 
-- [ ] Loaders for `.track/.nodes/.arcs/.route`, and a `Trip` object
-- [ ] Inventory: trips per partition, file sizes, row counts, dtypes
-- [ ] Missing or invalid values, checks that coordinates are plausible, timestamp ordering, histogram of time gaps
-- [ ] Trajectory stats: duration, length, speed distribution, geographic extent
-- [ ] Road network: nodes and arcs, degree distribution, connected components (networkx), isolated nodes
-- [ ] Route: continuity, repeated arcs, GPS → route distance distribution
-- [ ] Anomaly table: large gaps, far-off points, broken routes, and our decision for each
-- [ ] **Folium map** of a sample trip: raw GPS, road network around it, reference route, with a layer control
-- [ ] Save figures to `results/figures/eda_*` and the summary CSV to `results/logs/eda_summary.csv`
+- [x] Loaders for `.track/.nodes/.arcs/.route`, and a `Trip` object
+- [x] Inventory: trips per partition, file sizes, row counts (`eda_file_inventory.csv`)
+- [x] Missing or invalid values, checks that coordinates are plausible, timestamp ordering, histogram of time gaps
+- [x] Trajectory stats: duration, length, speed distribution, geographic extent
+- [x] Road network: nodes and arcs, connected components (scipy csgraph), isolated nodes, two-way arcs, duplicate arcs
+- [x] Route: continuity, repeated arcs, GPS → route distance distribution
+- [x] Anomaly table (`eda_anomalies.csv`) with a decision for each type
+- [x] **Folium maps**: `results/maps/eda_train_00000095.html` and `eda_anomaly_train_00000054.html`
+- [x] Figures saved to `results/figures/eda_*.png`
 
 ## Phase 2: Labels and candidate generation
 `labels.py`, `candidates.py`, `network.py`

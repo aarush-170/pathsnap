@@ -1,0 +1,106 @@
+"""Folium map builders (shared by EDA, evaluation and the API/UI)."""
+from __future__ import annotations
+
+import folium
+import numpy as np
+from scipy.spatial import cKDTree
+
+from .geo import LocalProjector
+from .io import Trip
+
+COLORS = dict(gps="#1f77b4", network="#9e9e9e", route="#2ca02c", pred="#d62728", wrong="#ff7f0e")
+
+
+def nearby_arc_ids(trip: Trip, buffer_m: float = 150.0) -> np.ndarray:
+    """Arcs with at least one endpoint within buffer_m of any GPS point."""
+    proj = LocalProjector.for_points(trip.track.lon, trip.track.lat)
+    gps = proj.to_xy(trip.track.lon.values, trip.track.lat.values)
+    nxy = proj.to_xy(trip.nodes[:, 0], trip.nodes[:, 1])
+    d, _ = cKDTree(gps).query(nxy, distance_upper_bound=buffer_m)
+    near = np.isfinite(d)
+    return np.where(near[trip.arcs[:, 0]] | near[trip.arcs[:, 1]])[0]
+
+
+def _arc_latlon(trip: Trip, arc_ids):
+    a = trip.arcs[arc_ids]
+    p, q = trip.nodes[a[:, 0]], trip.nodes[a[:, 1]]
+    return [[(y1, x1), (y2, x2)] for (x1, y1), (x2, y2) in zip(p, q)]
+
+
+def _route_polyline(trip: Trip, arc_ids):
+    """Chain consecutive arcs into polylines, starting a new one at each break."""
+    lines, cur = [], []
+    for i, a in enumerate(arc_ids):
+        u, v = trip.arcs[a]
+        if cur and trip.arcs[arc_ids[i - 1], 1] != u:
+            lines.append(cur)
+            cur = []
+        if not cur:
+            cur.append((trip.nodes[u, 1], trip.nodes[u, 0]))
+        cur.append((trip.nodes[v, 1], trip.nodes[v, 0]))
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def _legend(items: dict[str, str]) -> folium.Element:
+    rows = "".join(
+        f'<div><span style="display:inline-block;width:14px;height:4px;background:{c};margin-right:6px;'
+        f'vertical-align:middle"></span>{name}</div>' for name, c in items.items())
+    html = (f'<div style="position:fixed;bottom:24px;left:24px;z-index:9999;background:white;padding:8px 10px;'
+            f'border:1px solid #999;border-radius:4px;font:12px sans-serif">{rows}</div>')
+    return folium.Element(html)
+
+
+def trip_map(trip: Trip, predicted_route=None, wrong_points=None, buffer_m: float = 150.0,
+             max_gps_markers: int = 3000, title: str | None = None) -> folium.Map:
+    lat, lon = trip.track.lat.values, trip.track.lon.values
+    m = folium.Map(tiles="OpenStreetMap", control_scale=True)
+    legend = {}
+
+    net = folium.FeatureGroup(name="Road network (nearby)", show=True)
+    for seg in _arc_latlon(trip, nearby_arc_ids(trip, buffer_m)):
+        folium.PolyLine(seg, color=COLORS["network"], weight=1, opacity=0.6).add_to(net)
+    net.add_to(m)
+    legend["Road network"] = COLORS["network"]
+
+    if trip.route is not None:
+        fg = folium.FeatureGroup(name="Reference route", show=True)
+        for line in _route_polyline(trip, trip.route):
+            folium.PolyLine(line, color=COLORS["route"], weight=5, opacity=0.8).add_to(fg)
+        fg.add_to(m)
+        legend["Reference route"] = COLORS["route"]
+
+    if predicted_route is not None:
+        fg = folium.FeatureGroup(name="Predicted route", show=True)
+        for line in _route_polyline(trip, np.asarray(predicted_route)):
+            folium.PolyLine(line, color=COLORS["pred"], weight=3, opacity=0.9, dash_array="6").add_to(fg)
+        fg.add_to(m)
+        legend["Predicted route"] = COLORS["pred"]
+
+    gps = folium.FeatureGroup(name="GPS observations", show=True)
+    step = max(1, len(lat) // max_gps_markers)
+    for i in range(0, len(lat), step):
+        folium.CircleMarker((lat[i], lon[i]), radius=2, color=COLORS["gps"], fill=True, fill_opacity=0.8,
+                            weight=0, tooltip=f"#{i}  t={trip.track.t.iat[i]:.0f}s").add_to(gps)
+    gps.add_to(m)
+    legend["GPS observation" + (f" (every {step})" if step > 1 else "")] = COLORS["gps"]
+
+    if wrong_points is not None and len(wrong_points):
+        fg = folium.FeatureGroup(name="Mismatched points", show=True)
+        for i in wrong_points:
+            folium.CircleMarker((lat[i], lon[i]), radius=4, color=COLORS["wrong"], fill=True,
+                                tooltip=f"mismatch #{i}").add_to(fg)
+        fg.add_to(m)
+        legend["Mismatched point"] = COLORS["wrong"]
+
+    folium.Marker((lat[0], lon[0]), tooltip="Start", icon=folium.Icon(color="green", icon="play")).add_to(m)
+    folium.Marker((lat[-1], lon[-1]), tooltip="End", icon=folium.Icon(color="red", icon="stop")).add_to(m)
+    m.fit_bounds([[lat.min(), lon.min()], [lat.max(), lon.max()]])
+    folium.LayerControl(collapsed=False).add_to(m)
+    m.get_root().html.add_child(_legend(legend))
+    if title:
+        m.get_root().html.add_child(folium.Element(
+            f'<div style="position:fixed;top:10px;left:60px;z-index:9999;background:white;padding:4px 8px;'
+            f'border:1px solid #999;font:bold 14px sans-serif">{title}</div>'))
+    return m
