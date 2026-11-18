@@ -173,7 +173,15 @@ Original design:
 - Allow port 8000 through the Windows firewall.
 - Test across two machines on the same Wi-Fi beforehand, and try all 10 trip IDs.
 
-## Phase 10: Report and submission
+## Phase 10: Report and submission. 🟡 Report built; submission steps left
+`report/build_report.py` builds `report/PathSnap_Technical_Report.pdf` (18 pages, Deliverables §2–8, every number read from `results/`).
+
+Still to do:
+- **Two-laptop rehearsal**, adding to report §7 the screenshots of the UI on laptop 2 and the API CMD log on laptop 1.
+- **Make the repo public.**
+- **Each member reviews their sections for the viva.**
+
+Original checklist:
 - [ ] PDF following Deliverables §2–7. Every table and figure comes from `results/`.
 - [ ] Make the repo public, with a README containing exact run commands.
 - [ ] AI-use disclosure, as required by the event policy.

@@ -1,0 +1,5 @@
+16:32:38 | INFO | loaded model LightGBM (Optuna-tuned, Phase 5 trial 8) | 10 evaluation trips from data\raw\student_test
+16:32:49 | INFO | GET /trips from 127.0.0.1 -> 200 (7 ms)
+16:33:03 | INFO | predict trip=00000040 use_hmm=True: running pipeline
+16:33:04 | INFO | predict trip=00000040: 2995 GPS points, 14884 candidates | Top-1 classifier 95.29% -> final 97.66% | continuity 96.53% | route F1 0.979 | 1.03s
+16:33:04 | INFO | POST /predict from 127.0.0.1 -> 200 (1408 ms)
