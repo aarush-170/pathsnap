@@ -1,0 +1,9 @@
+split,file,trips,files_exist,bytes,rows
+student_test,arcs,10,10,1902157,185041
+student_test,nodes,10,10,1822179,90689
+student_test,route,10,10,18344,3477
+student_test,track,10,10,625911,19160
+train,arcs,80,80,44267751,3876904
+train,nodes,80,80,38431647,1933485
+train,route,80,80,165702,31336
+train,track,80,80,6872352,208417

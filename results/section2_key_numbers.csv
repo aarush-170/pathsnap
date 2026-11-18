@@ -1,0 +1,31 @@
+split,metric,source_column,count,sum,median,min,max
+student_test,GPS points per trip,n_points,10,19160.0,1420.0,262.0,3958.0
+train,GPS points per trip,n_points,80,208417.0,1529.0,361.0,19313.0
+student_test,network nodes per trip,n_nodes,10,90689.0,6596.5,1770.0,26635.0
+train,network nodes per trip,n_nodes,80,1933485.0,9608.0,299.0,155003.0
+student_test,network arcs per trip,n_arcs,10,185041.0,13145.0,3577.0,56027.0
+train,network arcs per trip,n_arcs,80,3876904.0,19526.5,649.0,307392.0
+student_test,duplicate directed arcs per trip,duplicate_arcs,10,128.0,3.5,0.0,62.0
+train,duplicate directed arcs per trip,duplicate_arcs,80,1775.0,2.0,0.0,322.0
+student_test,fraction of arcs with reverse twin per trip,two_way_frac,10,9.26940290876092,0.9326111818223632,0.8554654738607772,0.9956511787594416
+train,fraction of arcs with reverse twin per trip,two_way_frac,80,73.73386832851554,0.9511203120769942,0.3513282833671183,1.0
+student_test,weak components per trip,n_weak_components,10,227.0,11.0,5.0,100.0
+train,weak components per trip,n_weak_components,80,3121.0,20.0,1.0,421.0
+student_test,largest SCC node fraction per trip,largest_scc_frac,10,9.415619031965122,0.9609677685847287,0.8169491525423729,0.9843955195056008
+train,largest SCC node fraction per trip,largest_scc_frac,80,75.97771300962516,0.9641911601989523,0.6358574610244989,0.99961788307222
+student_test,route breaks per trip,route_breaks,10,1.0,0.0,0.0,1.0
+train,route breaks per trip,route_breaks,80,13.0,0.0,0.0,3.0
+student_test,fraction GPS >50 m from route per trip,frac_points_gt_50m,10,0.006821627084386,0.0,0.0,0.006821627084386
+train,fraction GPS >50 m from route per trip,frac_points_gt_50m,80,1.9007235526195871,0.0,0.0,0.8718997566406048
+student_test,median point-to-route distance per trip (m),gps_route_dist_median_m,10,50.354927701779474,4.593247160634188,4.167391810751114,6.821182554261376
+train,median point-to-route distance per trip (m),gps_route_dist_median_m,80,645.8492416916064,4.498224856729215,3.451094359980776,138.51439765354573
+student_test,95th percentile point-to-route distance per trip (m),gps_route_dist_p95_m,10,162.7923511684389,15.76822641068653,11.679554278203854,26.121692031124084
+train,95th percentile point-to-route distance per trip (m),gps_route_dist_p95_m,80,1897.5345543131762,14.216591964209401,10.36505923515658,242.22104571976183
+student_test,fraction 1-second intervals per trip,frac_dt_eq_1,10,9.81989693655198,0.9993230606354611,0.8612794612794613,1.0
+train,fraction 1-second intervals per trip,frac_dt_eq_1,80,75.06368829265216,0.9909792227540838,0.5306553911205074,1.0
+student_test,maximum sampling gap per trip (s),max_gap_s,10,255.0,2.0,1.0,210.0
+train,maximum sampling gap per trip (s),max_gap_s,80,216512.0,11.0,1.0,153064.0
+student_test,steps above 200 km/h per trip,speed_jumps_gt_200kmh,10,4.0,0.0,0.0,2.0
+train,steps above 200 km/h per trip,speed_jumps_gt_200kmh,80,917.0,0.0,0.0,610.0
+student_test,zero-length arcs per trip,zero_length_arcs,10,6.0,0.0,0.0,2.0
+train,zero-length arcs per trip,zero_length_arcs,80,100.0,0.0,0.0,14.0

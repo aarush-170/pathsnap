@@ -1,0 +1,17 @@
+file,comparison,match,committed_bytes,rerun_bytes
+results/logs/eda_anomalies.csv,CSV values,True,3018,3067
+results/logs/eda_file_inventory.csv,CSV values,True,13591,13952
+results/logs/eda_split_summary.csv,CSV values,True,16582,16999
+results/logs/eda_trip_summary.csv,CSV values,True,43359,43450
+results/figures/eda_anomaly_distance_over_time.png,rendered pixels,True,169337,169337
+results/figures/eda_arc_length.png,rendered pixels,True,34187,34187
+results/figures/eda_data_quality.png,rendered pixels,True,51374,51374
+results/figures/eda_gps_to_route_distance.png,rendered pixels,True,86076,86076
+results/figures/eda_network_connectivity.png,rendered pixels,True,83573,83573
+results/figures/eda_points_per_trip.png,rendered pixels,True,50320,50320
+results/figures/eda_sampling_intervals.png,rendered pixels,True,50100,50100
+results/figures/eda_speed_distribution.png,rendered pixels,True,35869,35869
+results/figures/eda_trajectories_anomalies.png,rendered pixels,True,342391,342391
+results/figures/eda_trajectories_typical.png,rendered pixels,True,635232,635232
+results/maps/eda_anomaly_train_00000054.html,HTML after generated Folium ID normalization,True,5778014,5778014
+results/maps/eda_train_00000095.html,HTML after generated Folium ID normalization,True,1880164,1880164
