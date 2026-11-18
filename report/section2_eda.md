@@ -1,6 +1,6 @@
 # 2. Dataset Understanding and Exploratory Data Analysis
 
-This first-review section covers the dataset structure, the preprocessing decisions made from the available data, and the features planned for Phase 3. EDA uses only `train` (80 trips) and `student_test` (10 trips). The evaluator partition was not opened or used.
+This first-review section covers the dataset structure, the preprocessing decisions made from the available data, and the feature-engineering decisions implemented in Phase 3. The current `main` plan marks Phase 3 complete. EDA uses only `train` (80 trips) and `student_test` (10 trips). The evaluator partition was not opened or used.
 
 ## 2.1 Dataset structure
 
@@ -15,7 +15,7 @@ The raw data is grouped by trip. Each trip directory contains four headerless, w
 
 *Table 1. Raw trip files, columns, and the identifiers used to relate them. Source: `src/pathsnap/io.py` and Dataset Exploration, “Raw File Types.”*
 
-The relationship is GPS point → nearby candidate arc → ordered route. The route is not a per-point label file: it is an ordered list of arcs, and the trip-level median is about five GPS observations per route arc. We therefore will not pair row *i* in `.track` with row *i* in `.route`. The planned label preparation is an order-preserving alignment of GPS observations to the route arc sequence. The EDA decision is to leave a point unlabelled when the alignment places it more than 50 m from the reference route; unlabelled points will be omitted from classifier training and point-level metrics.
+The relationship is GPS point → nearby candidate arc → ordered route. The route is not a per-point label file: it is an ordered list of arcs, and the trip-level median is about five GPS observations per route arc. We therefore do not pair row *i* in `.track` with row *i* in `.route`. Phase 2 implements an order-preserving dynamic-programming alignment from GPS observations to positions in the route arc sequence. Route position cannot move backwards; the alignment balances point-to-arc distance with route progress versus GPS displacement. Points more than 50 m from every route arc remain unlabelled and are omitted from model training and point-level metrics.
 
 ### Inventory
 
@@ -50,7 +50,7 @@ Each trip has its own network, so node and arc IDs must never be interpreted acr
 | Isolated nodes | 0 | No isolated nodes were found by the network check |
 | Zero-length arcs | 106 | Retain, but treat as zero geometric length |
 | Route breaks | 14 | Preserve the ordered route; do not assume each adjacent pair is connected |
-| Steps implying speed above 200 km/h | 921 | Keep the observations; use speed and jump size as planned signals |
+| Steps implying speed above 200 km/h | 921 | Keep the observations; Phase 3 includes speed and adjacent time intervals, but no separate jump-size column |
 
 *Table 3. Missing-value and structural checks across both analyzed partitions. Source: `results/figures/eda_data_quality.png`, `results/logs/eda_trip_summary.csv`, and `results/logs/eda_notes.md`.*
 
@@ -68,11 +68,18 @@ Sampling is nominally one observation per second. The median, across trips, of t
 
 *Figure 3. Speed between consecutive GPS observations, clipped at 200 km/h for display. The 921 above-threshold steps are retained rather than deleted. Source: `results/figures/eda_speed_distribution.png` and `results/logs/eda_trip_summary.csv`.*
 
-GPS-to-route distance provides the initial candidate-search scale. Across trips, the median of per-trip median distances is 4.498225 m in train and 4.593247 m in student_test. The corresponding medians of per-trip 95th-percentile distances are 14.216592 m and 15.768227 m. Most ordinary observations are close to the reference route, but a few trips are not. We therefore plan to start candidate generation in the approximately 30–50 m range and choose the final radius using the Phase 2 candidate-miss-rate curve, rather than treating the reference route as complete everywhere.
+GPS-to-route distance provides the candidate-search scale. Across trips, the median of per-trip median distances is 4.498225 m in train and 4.593247 m in student_test. The corresponding medians of per-trip 95th-percentile distances are 14.216592 m and 15.768227 m. Most ordinary observations are close to the reference route, but a few trips are not. EDA suggested a 30–50 m search scale. Phase 2 then swept the candidate settings and selected a 50 m radius with a maximum of 12 candidates per point.
 
 ![GPS distance to the nearest reference-route arc.](../results/figures/eda_gps_to_route_distance.png)
 
 *Figure 4. Pooled GPS-to-reference-route distances for train and student_test; the vertical guides mark 30 m and 50 m. Source: `results/figures/eda_gps_to_route_distance.png`.*
+
+| Split | Labelled-point fraction | Mean candidates per labelled point | Candidate miss rate |
+|---|---:|---:|---:|
+| train | 0.8917314806373761 | 7.188660869939522 | 0.005902546111960054 |
+| student_test | 0.9985908141962422 | 7.8111116918413215 | 0.0006794543458945278 |
+
+*Table 4. Phase 2 candidate summary at the selected 50 m radius and 12-candidate limit. Miss rate is the fraction of labelled points whose true arc is absent from the generated candidates. Source: `results/logs/candidate_summary.csv`.*
 
 ![Typical GPS trajectories over the road network and reference route.](../results/figures/eda_trajectories_typical.png)
 
@@ -82,7 +89,7 @@ GPS-to-route distance provides the initial candidate-search scale. Across trips,
 
 *Figure 6. GPS-point counts per trip and the relationship between GPS observations and reference-route arc counts in train and student_test. Source: `results/figures/eda_points_per_trip.png`.*
 
-The network checks show a large, mostly connected directed graph with some structural exceptions. The train median is 9,608 nodes and 19,526.5 arcs per trip; the median weak-component count is 20 and the median largest strongly connected component covers 0.964191 of nodes. About 95% of arcs have a reverse twin. Duplicate directed arcs occur in the data (median 2.5 per trip, maximum 322); since they have the same endpoints, we will treat geometrically identical duplicates as equivalent when scoring a candidate. A reverse twin is not assumed for every road. Directed connectivity also means some candidate transitions can be unreachable; the planned route decoder needs a fallback for those pairs. The route list has 14 breaks in total, where consecutive reference arcs do not share a node.
+The network checks show a large, mostly connected directed graph with some structural exceptions. The train median is 9,608 nodes and 19,526.5 arcs per trip; the median weak-component count is 20 and the median largest strongly connected component covers 0.964191 of nodes. About 95% of arcs have a reverse twin. Duplicate directed arcs occur in the data (median 2.5 per trip, maximum 322); since they have the same endpoints, the label builder canonicalizes duplicate arc IDs and Phase 3 treats them as the same road. A reverse twin is not assumed for every road. Directed connectivity also means some candidate transitions can be unreachable; the later route decoder needs a fallback for those pairs. The route list has 14 breaks in total, where consecutive reference arcs do not share a node.
 
 ![Road-network size and connectivity per trip.](../results/figures/eda_network_connectivity.png)
 
@@ -104,7 +111,7 @@ The anomaly checks distinguish a route that skips part of the drive from a road 
 | `00000043` | 7% | 27 m | Mixed case |
 | `00000096` | 4%, last 145 points | 76 m | Road missing at the end |
 
-*Table 4. The five largest route-distance anomalies identified in train. Percentages and interpretations are reported as in the EDA notes; distances are medians for far points. Source: `results/logs/eda_notes.md` and `results/logs/eda_anomalies.csv`.*
+*Table 5. The five largest route-distance anomalies identified in train. Percentages and interpretations are reported as in the EDA notes; distances are medians for far points. Source: `results/logs/eda_notes.md` and `results/logs/eda_anomalies.csv`.*
 
 ![Trips with the largest distance from GPS to the reference route.](../results/figures/eda_trajectories_anomalies.png)
 
@@ -118,27 +125,34 @@ The interactive map for the typical train example is available at [`eda_train_00
 
 ### Assumptions and limitations
 
-The supplied route is a reference, not independently verified, error-free ground truth. The GPS can be noisy, the network can omit roads, and the reference route can skip roads that appear in the network. Our planned 50 m unlabelled-point rule and candidate radius are therefore practical EDA decisions, not claims that all remaining labels are certainly correct. The detailed feature extraction and classifier have not been implemented yet.
+The supplied route is a reference, not independently verified, error-free ground truth. The GPS can be noisy, the network can omit roads, and the reference route can skip roads that appear in the network. The 50 m label cutoff and the Phase 2 candidate setting (50 m, at most 12 candidates) are practical choices, not claims that all remaining labels are certainly correct. Phase 3 feature extraction is implemented; Phase 4 classifier comparison has not been completed.
 
-## 2.3 Planned feature-engineering decisions
+## 2.3 Phase 3 feature-engineering decisions
 
-Phase 3 is planned work, not a completed implementation. Features will be created for each GPS-point/candidate-arc pair. The EDA signals below motivate the planned groups; they do not establish model performance.
+Phase 3 is implemented in `src/pathsnap/features.py` and built with `python -m scripts.build_features`. It creates 26 features for each GPS-point/candidate-arc pair, in six groups. The feature code uses the GPS track and network geometry; it does not read the reference route, so the same feature function can run where route labels are unavailable.
 
-| Planned feature group | Planned values from `PLAN.md` | EDA reason |
+| Implemented group | Feature columns | Why these are used |
 |---|---|---|
-| Candidate geometry | Perpendicular distance; rank among the point's candidates; distance above the minimum candidate distance; within-point distance z-score | Typical GPS-to-route distances are in the low tens of metres, while the anomaly trips show that distance alone cannot make every point labelable. |
-| Direction | Signed and absolute difference between smoothed GPS heading and directed arc bearing; reverse arcs use the opposite heading | `.arcs` is directed, and about 95% of arcs have reverse twins; direction can distinguish the two travel directions on the same geometry. |
-| Motion and position on arc | Speed, acceleration, projection fraction along the arc, and arc length | The sampling is close to 1 Hz but contains long gaps and 921 steps above 200 km/h; arc lengths vary across the network. We retain these observations and expose the motion signal to the model. |
-| Local network context | Candidate count for the point; node degrees; reverse-twin indicator | Network size and connectivity vary by trip, some routes are broken, and reverse twins are common but not universal. |
-| Temporal context | Whether the candidate is also near the previous and next points; distance to the previous point's nearest candidate; time gap to the previous point | Most observations are regularly sampled, but gaps longer than 60 s occur. Large gaps will split decoding segments; local continuity remains useful inside a segment. |
+| Distance | `dist`, `rank`, `dist_minus_min`, `dist_ratio_min`, `dist_z`, `n_candidates`, `gap_1st_2nd` | GPS is usually close to the right arc, but the distance relative to other candidates and the gap between the nearest choices captures ambiguity and trip-to-trip noise variation. |
+| Projection | `t`, `t_at_end`, `arc_len` | A projection at an arc endpoint can signal that the observation lies beyond that segment; arc length supplies the local segment scale. |
+| Heading | `heading_cos`, `heading_absdiff`, `heading_cos_prev`, `heading_cos_next`, `heading_rank`, `heading_valid` | Reverse twins have the same geometric distance, so direction helps distinguish opposite travel directions. Heading is calculated over nearby samples, with a validity flag for insufficient displacement. |
+| Context | `ctx_dist_mean`, `ctx_dist_max`, `ctx_minus_min`, `ctx_rank` | A candidate that also fits neighbouring GPS points is less likely to be a one-point geometric coincidence. Context uses points from two steps before through two steps after, with each arc extended 30 m at both ends for this calculation. |
+| Motion | `speed`, `dt_prev`, `dt_next` | Speed and adjacent sample intervals describe movement and gaps; they help interpret heading and context where timing is irregular. |
+| Network | `from_in_degree`, `to_out_degree`, `has_reverse_twin` | Degree features describe local topology, and the reverse-twin flag identifies a common source of equal-distance directional ambiguity. |
 
-*Table 5. Planned Phase 3 candidate features and their connection to observed PathSnap data. Feature names and target definition come from `PLAN.md`, Phase 3; EDA rationales cite the files listed in the final number trail.*
+*Table 6. Implemented Phase 3 features and their rationale. Feature names and implementation details come from `src/pathsnap/features.py`; rationales are documented in `results/logs/phase3_notes.md` and relate to the EDA findings above.*
 
-After order-preserving route alignment, the planned candidate target is binary: whether a candidate is the aligned reference arc for that observation. Candidate scores will be normalized per GPS point for Top-1 selection and as emissions to the planned HMM. Points more than 50 m from the reference route remain unlabelled and are excluded from training and point-level metrics, with the excluded count reported when the alignment is implemented. The final search radius will be selected from the Phase 2 candidate-miss-rate curve.
+The feature analysis was run on labelled train candidate rows. The strongest individual signals were relative distance features: `dist_minus_min` has absolute AUC 0.90915584, `rank` 0.90462443, and `ctx_minus_min` 0.90270653. `heading_cos` has absolute AUC 0.83216264. Speed alone has absolute AUC 0.53624952, and the degree columns are also weak individually; Phase 3 notes retain them because their value may come from interactions, such as trusting heading only when the GPS movement is informative. These are univariate results, not model-selection or cross-validation results.
+
+![Univariate feature AUC on labelled train candidates.](../results/figures/feature_univariate_auc.png)
+
+*Figure 11. Absolute univariate AUC by feature on labelled train points; higher values indicate more separation when that feature is considered alone. Source: `results/figures/feature_univariate_auc.png` and `results/logs/feature_univariate.csv`.*
+
+The label is binary (`is_true`): whether a candidate is the observation's labelled arc. Duplicate arcs count as the same road. Rows from unlabelled observations are excluded. Candidate scoring and normalization are the planned model interface: Phase 4 will select the highest-scoring arc per point for Top-1 accuracy and normalize scores per point for later HMM emission probabilities. The classifier comparison phase has not yet been completed.
 
 ## Number trail
 
-The values below include the data counts and thresholds stated in the prose and tables. Table 2 contains the exact byte and row totals by split and file type. Figure axes and plotted thresholds are sourced by the captions under Figures 1–10.
+The values below include the data counts and thresholds stated in the prose and tables. Table 2 contains the exact byte and row totals by split and file type. Figure axes and plotted thresholds are sourced by the captions under Figures 1–11.
 
 | Values used | Source file(s) |
 |---|---|
@@ -147,10 +161,12 @@ The values below include the data counts and thresholds stated in the prose and 
 | 0 NaNs; 0 invalid coordinates; 0 duplicate timestamps; 0 non-monotonic timestamps; 0 invalid route IDs; 0 isolated nodes; 106 zero-length arcs; 14 route breaks; 921 steps above 200 km/h | `results/figures/eda_data_quality.png`; `results/logs/eda_trip_summary.csv`; `results/logs/eda_notes.md` |
 | Projection error bound 0.1% over 20 km | `src/pathsnap/geo.py` |
 | Per-trip median fractions of exact one-second intervals: 0.990979 (train), 0.999323 (student_test); gaps over 60 s in 23 train trips and 1 student_test trip; maximum gap 153,064 s in train/00000090 | `results/logs/eda_split_summary.csv`; `results/logs/eda_trip_summary.csv`; `results/logs/eda_notes.md` |
-| Per-trip median GPS-to-route distance 4.498225 m (train), 4.593247 m (student_test); per-trip median 95th-percentile distance 14.216592 m (train), 15.768227 m (student_test); candidate range 30–50 m; alignment cutoff 50 m | `results/logs/eda_split_summary.csv`; `results/logs/eda_notes.md`; `scripts/eda.py` |
+| Per-trip median GPS-to-route distance 4.498225 m (train), 4.593247 m (student_test); per-trip median 95th-percentile distance 14.216592 m (train), 15.768227 m (student_test); EDA candidate range 30–50 m; selected radius 50 m and candidate limit 12; alignment cutoff 50 m | `results/logs/eda_split_summary.csv`; `results/logs/eda_notes.md`; `results/logs/candidate_summary.csv`; `results/logs/phase2_notes.md`; `src/pathsnap/labels.py` |
+| Selected-setting label fractions, mean candidates, and miss rates in Table 4 | `results/logs/candidate_summary.csv` |
 | Train median network size 9,608 nodes and 19,526.5 arcs per trip; 20 weak components per trip; largest SCC fraction 0.964191; approximately 95% reverse twins; duplicate arcs median 2.5 per trip, maximum 322 | `results/logs/eda_split_summary.csv`; `results/logs/eda_notes.md`; `src/pathsnap/network.py` |
 | Anomaly rows: 00000054 (87%, 86 m, ring road about 100 m from arcs); 00000033 (59%, 7 m); 00000002 (12%, last 552 points, 56 m); 00000043 (7%, 27 m); 00000096 (4%, last 145 points, 76 m) | `results/logs/eda_notes.md`; `results/logs/eda_anomalies.csv` |
 | Figure sample counts: 3 typical trips in each split and 3 worst anomalies; plotted thresholds 5 s, 30 m, 50 m, and 200 km/h | `scripts/eda.py`; Figures 2–5 and 9–10; captions above |
-| Planned features and binary candidate target | `PLAN.md`, Phase 3 |
+| 26 implemented features in 6 groups; 30 m context extension; 2-step heading/context window; univariate absolute AUC values 0.90915584, 0.90462443, 0.90270653, 0.83216264, 0.53624952 | `src/pathsnap/features.py`; `results/logs/feature_univariate.csv`; `results/logs/phase3_notes.md`; `PLAN.md`, Phase 3 |
+| Binary target `is_true`; per-point probability normalization | `src/pathsnap/features.py`; `results/logs/phase3_notes.md`; `PLAN.md`, Phase 3 |
 
-*Table 6. Number registry for the section. Exact split inventory byte/row values appear in Table 2; chart tick values are visible in the referenced source figures.*
+*Table 7. Number registry for the section. Exact split inventory byte/row values appear in Table 2; chart tick values are visible in the referenced source figures.*
