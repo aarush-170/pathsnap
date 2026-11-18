@@ -5,3 +5,4 @@
 *.parquet binary
 *.joblib binary
 *.pt binary
+models/*.txt binary
