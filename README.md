@@ -4,7 +4,7 @@
 |---|---|---|
 | Aniket Sen | PES1UG24CS062  | 5A |
 | Anirudh Ganesh Prabhu | PES1UG24CS063 | 5A |
-| Member 3 | Enter SRN | Enter Class |
+| Aashlesh P | PES1UG24CS011 | 5A |
 | Member 4 | Enter SRN | Enter Class |
 
 
