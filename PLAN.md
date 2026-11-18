@@ -69,19 +69,25 @@ Results from a quick check of all 90 trips:
 
 **Target:** binary, "is this candidate the true arc?". Trained only on rows from labelled points. The classifier's probabilities are normalised per point, both for Top-1 accuracy and as the HMM emission.
 
-## Phase 4: Train and compare at least 5 models (feeds report §3)
-`scripts/train_models.py`, and log every model to `results/logs/model_comparison.csv`
+## Phase 4: Train and compare at least 5 models (feeds report §3). ✅ Done
+**Result** (`results/logs/phase4_notes.md`): all 8 models trained.
+- Top 3: LightGBM 0.8915 CV Top-1 / 0.8931 test, XGBoost 0.8909 / 0.8941, Random Forest 0.8887 / 0.8912.
+- Every model except Naive Bayes beats the 0.858 rule baseline.
+- **Selected: LightGBM** (team decision). It's tied with XGBoost on Top-1, but has better log loss in all 5 folds, a smaller overfitting gap and faster training.
 
-- 5-fold **GroupKFold by trip** on train. Evaluate on student_test.
-- Planned models (7, to have margin):
+`src/pathsnap/models.py` (model registry), `scripts/train_models.py` (one protocol for all models). Each model writes `results/models/<model>/` (metrics.json, cv_folds.csv, confusion_test.csv, MLP history.csv), and `--report` merges them into `results/logs/model_comparison.csv` and `results/figures/model_*.png`.
+
+- 5-fold **GroupKFold by trip** on train (trip-to-fold map saved in `results/logs/cv_folds.csv`). Refit on all train trips, then evaluate once on student_test.
+- Models (8 implemented; all untuned starting configs, recorded in metrics.json):
   1. Logistic Regression (linear)
   2. Gaussian Naive Bayes (probabilistic)
-  3. KNN, distance-weighted (instance-based)
-  4. Random Forest / Extra Trees (bagging)
-  5. HistGradientBoosting or LightGBM (boosting)
+  3. KNN, distance-weighted, k = 25 (instance-based; trained on a 200k-row sample)
+  4. Random Forest, 200 trees (bagging)
+  5. LightGBM (boosting)
   6. XGBoost (boosting)
-  7. MLP in PyTorch (neural; produces real epoch loss curves)
-  8. *(optional)* Linear SVM with calibration (kernel-based)
+  7. MLP in PyTorch, 128-64 hidden, early stopping on held-out trips (neural; real epoch loss curves)
+  8. Linear SVM with Platt calibration (kernel-based; trained on a 200k-row sample)
+- Overfitting check: every fold also records train-fold Top-1, Macro F1 and log loss on a fixed sample of about 200k rows.
 - Metrics:
   - CV and test Macro F1, Precision, Recall, Log Loss
   - **Observation-level Top-1 accuracy**

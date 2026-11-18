@@ -21,6 +21,9 @@ labels:
   max_dist_m: 50.0              # points farther than this from every route arc are left unlabelled
   progress_weight: 0.1          # weight on |route progress - GPS displacement| between consecutive points
 
+model:
+  selected: lightgbm    # Phase 4 decision (results/logs/phase4_notes.md); tuned in Phase 5
+
 cv:
   n_splits: 5
   group: trip_id
