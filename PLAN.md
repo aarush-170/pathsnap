@@ -144,7 +144,8 @@ Original design:
 
 - `models/classifier.joblib` (or `.pt`), `models/feature_config.json`, `models/hmm_config.json`, and any scaler. Keep them small enough for GitHub.
 
-## Phase 9: API (Laptop 1) and UI (Laptop 2) (feeds report §7)
+## Phase 9: API (Laptop 1) and UI (Laptop 2) (feeds report §7). ✅ Built and tested on one machine
+`api/main.py` (FastAPI: /health, /trips, /predict, with a console log per request), `ui/app.py` (Streamlit: trip picker, metrics, Folium map, HMM on/off toggle). Two-laptop steps are in `docs/DEPLOYMENT.md`. Tested end to end against student_test trips: same numbers as Phase 8. **Still to do: rehearse across two laptops on the evaluation network.**
 `api/main.py`, `ui/app.py`
 
 **API (FastAPI), endpoints:**

@@ -62,8 +62,8 @@ _(Commands will be filled in as each stage is implemented.)_
 | HMM evaluation | `python -m scripts.eval_hmm` |
 | Folium maps | `python -m scripts.make_maps` (all student_test trips: `--all`) |
 | Export artifacts | `python -m scripts.export_artifacts` (re-check only: `--verify-only`; evaluator run-check, no scoring: `--check-eval`) |
-| API (Laptop 1) | `uvicorn api.main:app --host 0.0.0.0 --port 8000` |
-| UI (Laptop 2) | `streamlit run ui/app.py` |
+| API (Laptop 1) | `python -m uvicorn api.main:app --host 0.0.0.0 --port 8000` (see docs/DEPLOYMENT.md) |
+| UI (Laptop 2) | `streamlit run ui/app.py`, then set the API address in the sidebar |
 
 
 ## Team Members
