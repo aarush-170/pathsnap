@@ -59,18 +59,15 @@ Results from a quick check of all 90 trips:
 - [x] **Choose R and K** from the sweep (`candidate_sweep.csv`, `candidates_miss_rate.png`): **R = 50 m, K = 12**, giving a miss rate of 0.59% on train and 0.07% on student_test, with about 7–8 candidates per point.
 - [x] Output: `data/processed/{labels,candidates}_{split}.parquet`. Not committed; rebuild with `python -m scripts.build_dataset` (about 45 s).
 
-## Phase 3: Feature engineering
-`features.py`
+## Phase 3: Feature engineering. ✅ Done
+`src/pathsnap/features.py`, `src/pathsnap/metrics.py`, `scripts/build_features.py`, `tests/test_phase3.py`. Notes for the report are in `results/logs/phase3_notes.md`.
 
-Features for each (point, candidate) pair:
-- Perpendicular distance, its rank among the point's candidates, distance minus the minimum candidate distance, distance z-score within the point
-- Heading difference between the GPS heading (smoothed over ±k points) and the arc bearing, both signed and absolute. The reverse arc gets the opposite heading.
-- Speed and acceleration; projection fraction t along the arc; arc length
-- Number of candidates for the point; node degrees (is it an intersection?); whether a reverse twin arc exists
-- Context: whether the candidate is also near the previous/next points, and the distance to the previous point's nearest candidate
-- Time gap to the previous point
+- [x] 26 features in 6 groups: distance, projection, heading, context (points i±2), motion, network. None of them read the route.
+- [x] Feature tables in `data/processed/features_{split}.parquet` (1.36M train rows). Not committed; rebuild in about 20 s.
+- [x] Univariate AUC, feature distributions, correlation heatmap
+- [x] Rule baselines (no learning): nearest + heading gives **Top-1 85.6% on train and 85.8% on student_test**. This is the bar for Phase 4.
 
-**Target:** binary, "is this candidate the true arc?". The classifier's probabilities are normalised per point, both for Top-1 accuracy and as the HMM emission.
+**Target:** binary, "is this candidate the true arc?". Trained only on rows from labelled points. The classifier's probabilities are normalised per point, both for Top-1 accuracy and as the HMM emission.
 
 ## Phase 4: Train and compare at least 5 models (feeds report §3)
 `scripts/train_models.py`, and log every model to `results/logs/model_comparison.csv`

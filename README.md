@@ -55,6 +55,7 @@ _(Commands will be filled in as each stage is implemented.)_
 | EDA (stats, figures, Folium maps) | `python -m scripts.eda` |
 | Candidate radius/K sweep | `python -m scripts.build_dataset --sweep` |
 | Build labels + candidate tables | `python -m scripts.build_dataset` |
+| Build feature tables + analysis | `python -m scripts.build_features` |
 | Unit tests | `python -m pytest -q tests` |
 | Train & compare models | `python -m scripts.train_models` |
 | Bayesian optimisation | `python -m scripts.tune_optuna` |
