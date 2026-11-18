@@ -34,7 +34,7 @@ Results from a quick check of all 90 trips:
   - Route continuity is slightly below 100 % on a few trips.
 
   Document all of these in the EDA, and decide whether to drop the points or the trips.
-- Coordinates are around 8.6°E, 49.9°N (Germany). Use a metre-based projection: local equirectangular, or UTM 32N / EPSG:32632. Never use Euclidean distance on degrees.
+- Trips are spread worldwide: train longitudes run from −100° to +137° and latitudes from −35° to +61°, across the Americas, Europe, Africa, Asia and Japan. The evaluator trips are just as spread out. So we use a **per-trip** metre projection (local equirectangular centred on each trip), not one fixed UTM zone. Never use Euclidean distance on degrees.
 
 ---
 

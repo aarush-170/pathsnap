@@ -198,12 +198,14 @@ def main():
           P("Preprocessing turns the raw files into one clean table: <b>one row for every (GPS dot, nearby road) "
             "pair</b>, with a column saying whether that road is the correct one."),
           P("Step 1: Convert positions to metres", H3),
-          P("GPS gives degrees, but here a degree east is about 72 km while a degree north is about 111 km. "
-            "Measuring in degrees would distort every distance and angle. We convert each trip to metres around its "
-            "own centre. Over a trip this is accurate to better than 0.1%, far smaller than the GPS error, and a unit "
-            "test checks it against the exact (haversine) formula."),
-          say("We measure everything in metres, not degrees, because degrees are stretched differently east-west "
-              "and north-south."),
+          P("GPS gives degrees, but a degree north is always about 111 km while a degree east shrinks with "
+            "latitude: about 111 km at the equator, 72 km at 50° and 56 km at 60°. Our trips are spread across "
+            "the world (latitudes from −35° to +61°), so measuring in degrees would distort every distance "
+            "and angle, and differently in every trip. We convert each trip to metres around its own centre. Over a "
+            "trip this is accurate to better than 0.1%, far smaller than the GPS error, and a unit test checks it "
+            "against the exact (haversine) formula."),
+          say("We measure everything in metres, not degrees, because a degree east gets shorter the further you are "
+              "from the equator, and our trips are all over the world."),
           P("Step 2: Give every dot its correct road (labelling)", H3),
           P("The route lists the roads in driving order but not which dot belongs to which road. We walk along the "
             "dots and the route together and match each dot to a route road, with one rule: <b>we only ever move "

@@ -19,7 +19,7 @@ The evaluator partition was not opened.
 - About 99% of time steps are exactly 1 s (train median per trip 0.991; student_test 0.999).
 - 23 train trips and 1 student_test trip have gaps over 60 s. The extremes are train/00000090 (153,064 s) and train/00000078 (52,810 s).
   **Decision:** split a trajectory into separate segments wherever a gap exceeds a threshold, and decode each segment on its own.
-- 921 steps imply speeds over 200 km/h. They are concentrated in train/00000032, 00000001 and 00000013. Some are plausible (German Autobahn); others are GPS jumps.
+- 921 steps imply speeds over 200 km/h. They are concentrated in train/00000032, 00000001 and 00000013. Some are plausible (motorway speeds); others are GPS jumps.
   **Decision:** keep these points, but use speed and jump size as features. Don't delete points.
 
 ## GPS noise vs reference route

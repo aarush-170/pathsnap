@@ -58,7 +58,7 @@ _(Commands will be filled in as each stage is implemented.)_
 | Build feature tables + analysis | `python -m scripts.build_features` |
 | Unit tests | `python -m pytest -q tests` |
 | Train & compare models | `python -m scripts.train_models` (one model: `--models lightgbm`; table/plots only: `--report`; smoke test: `--sample 0.03`) |
-| Bayesian optimisation | `python -m scripts.tune_optuna` |
+| Bayesian optimisation | `python -m scripts.tune_optuna` (run used `--trials 20 --timeout 2700`; refit/compare only: `--final-only`) |
 | HMM evaluation | `python -m scripts.eval_hmm` |
 | Folium maps | `python -m scripts.make_maps` |
 | Export artifacts | `python -m scripts.export_artifacts` |
