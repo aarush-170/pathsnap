@@ -3,7 +3,7 @@
 | Name | SRN | Class |
 |---|---|---|
 | Aniket Sen | PES1UG24CS062  | 5A |
-| Member 2 | Enter SRN | Enter Class |
+| Anirudh Ganesh Prabhu | PES1UG24CS063 | 5A |
 | Member 3 | Enter SRN | Enter Class |
 | Member 4 | Enter SRN | Enter Class |
 
