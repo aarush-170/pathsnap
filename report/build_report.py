@@ -545,8 +545,10 @@ def build(D):
             f"{ex.total_s.min():.1f}-{ex.total_s.max():.1f} s per trip. A run-check on all 10 evaluator trips (prediction "
             f"only, nothing scored) completed without errors in {ev.total_s.min():.1f}-{ev.total_s.max():.1f} s per trip, "
             f"each with a continuous route."),
-          (fig(RFIG / "ui_laptop2.png", "Figure 7.1. Evaluator UI on Laptop 2 during the two-laptop demo, after "
-               "running a prediction on an evaluation trip.", PAGE_W * 0.9)
+          (fig(RFIG / "ui_laptop2.png", "Figure 7.1. Evaluator UI on Laptop 2 during the two-laptop demo, connected to "
+               "the API on Laptop 1 (http://172.20.10.2:8000), after running evaluation trip 00000015 (the same trip "
+               "as Figure 7.2): Top-1 accuracy with the gain over classifier only, correct points, route continuity, "
+               "route F1, processing time and the predicted route on the map.", PAGE_W)
            if (RFIG / "ui_laptop2.png").exists() else
            fig(RFIG / "ui_trip40.jpg", "Figure 7.1. Evaluator UI (Laptop 2) after running a prediction: Top-1, gain over "
                "classifier only, correct points, continuity, route F1, processing time and the predicted route on a "
