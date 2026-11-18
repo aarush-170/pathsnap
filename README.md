@@ -1,3 +1,13 @@
+## Team Members
+
+| Name | SRN | Class |
+|---|---|---|
+| Aniket Sen | PES1UG24CS062  | 5A |
+| Member 2 | Enter SRN | Enter Class |
+| Member 3 | Enter SRN | Enter Class |
+| Member 4 | Enter SRN | Enter Class |
+
+
 # PathSnap — Distributed Map-Matching & Route Reconstruction
 
 UE24CS352A Machine Learning Hackathon (PES University).
