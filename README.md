@@ -18,7 +18,6 @@ PathSnap matches noisy GPS observations to a road network and reconstructs the r
 | **Tuned LightGBM + HMM/Viterbi (deployed pipeline)** | **94.93%** |
 
 - **Technical report:** [report/PathSnap_Technical_Report.pdf](report/PathSnap_Technical_Report.pdf), rebuilt with `python report/build_report.py`.
-- **Plain-language explainer** (dataset, preprocessing, features): [report/PathSnap_Data_Preprocessing_Features.pdf](report/PathSnap_Data_Preprocessing_Features.pdf).
 - **Notes for each phase:** `results/logs/phase*_notes.md`.
 - **Plan and status:** [PLAN.md](PLAN.md).
 - **Two-laptop demo:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).

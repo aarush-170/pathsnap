@@ -20,8 +20,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.platypus import Image, KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from build_explainer_pdf import (BODY, CAP, CELL, CELLB, H1, H2, H3, INK, LIGHT, MUTED, PAGE_W, SUB, P, bullets,
-                                 table)
+from report_style import (BODY, CAP, CELL, CELLB, H1, H2, H3, INK, LIGHT, MUTED, PAGE_W, SUB, P, bullets,
+                          table)
 
 LOG, FIG, RFIG = ROOT / "results" / "logs", ROOT / "results" / "figures", ROOT / "report" / "figures"
 MODELS = ROOT / "results" / "models"
