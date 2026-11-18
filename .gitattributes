@@ -1,0 +1,7 @@
+# Binary files: never convert line endings
+*.pdf binary
+*.png binary
+*.jpg binary
+*.parquet binary
+*.joblib binary
+*.pt binary
