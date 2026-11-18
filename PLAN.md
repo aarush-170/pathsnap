@@ -137,8 +137,10 @@ Original design:
 
 - Layers: raw GPS (blue dots), nearby road network (grey), reference route (green), predicted route (red), and points the model got wrong (orange). Add a legend, a LayerControl, and fit_bounds to the trip.
 
-## Phase 8: Export artifacts
-`scripts/export_artifacts.py`
+## Phase 8: Export artifacts. ✅ Done
+`scripts/export_artifacts.py`, `src/pathsnap/pipeline.py` (the single prediction path), `src/pathsnap/evaluation.py` (server-side scoring). Notes are in `results/logs/phase8_notes.md`.
+
+**Result:** `models/lightgbm_tuned.txt` (16.4 MB) and `models/pipeline_config.json`. End-to-end from raw files on student_test: **94.93% Top-1** (classifier alone 89.37%), at most 2.6 s per trip. All 10 evaluator trips run in at most 3.5 s each (prediction only, nothing scored).
 
 - `models/classifier.joblib` (or `.pt`), `models/feature_config.json`, `models/hmm_config.json`, and any scaler. Keep them small enough for GitHub.
 

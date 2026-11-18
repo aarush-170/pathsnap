@@ -1,0 +1,73 @@
+{
+  "model_file": "lightgbm_tuned.txt",
+  "model": "LightGBM (Optuna-tuned, Phase 5 trial 8)",
+  "lightgbm_params": {
+    "learning_rate": 0.01269170486999142,
+    "n_estimators": 650,
+    "num_leaves": 228,
+    "min_child_samples": 188,
+    "subsample": 0.8231905839874377,
+    "colsample_bytree": 0.5598138475638506,
+    "reg_lambda": 0.12997381150693554,
+    "reg_alpha": 0.0024213554893651656,
+    "subsample_freq": 1
+  },
+  "seed": 42,
+  "features": [
+    "dist",
+    "rank",
+    "dist_minus_min",
+    "dist_ratio_min",
+    "dist_z",
+    "n_candidates",
+    "gap_1st_2nd",
+    "t",
+    "t_at_end",
+    "arc_len",
+    "heading_cos",
+    "heading_absdiff",
+    "heading_cos_prev",
+    "heading_cos_next",
+    "heading_rank",
+    "heading_valid",
+    "ctx_dist_mean",
+    "ctx_dist_max",
+    "ctx_minus_min",
+    "ctx_rank",
+    "speed",
+    "dt_prev",
+    "dt_next",
+    "from_in_degree",
+    "to_out_degree",
+    "has_reverse_twin"
+  ],
+  "candidates": {
+    "radius_m": 50,
+    "max_k": 12
+  },
+  "hmm": {
+    "beta": 5.0,
+    "alpha": 0.5,
+    "gap_break_seconds": 60,
+    "route_factor": 3.0,
+    "route_slack_m": 200.0
+  },
+  "labels": {
+    "max_dist_m": 50.0,
+    "progress_weight": 0.1
+  },
+  "training": {
+    "trips": 80,
+    "rows": 1336027,
+    "positives": 184776,
+    "fit_seconds": 57.6,
+    "trained_at": "2026-11-18T16:22:42",
+    "python": "3.13.7",
+    "lightgbm": "4.7.0"
+  },
+  "student_test_reference": {
+    "classifier_top1": 0.8937437934458788,
+    "hmm_top1": 0.9498249098416348,
+    "hmm_route_continuity": 0.9125627000864152
+  }
+}
