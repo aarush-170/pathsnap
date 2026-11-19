@@ -42,7 +42,7 @@ The browser opens at `http://localhost:8501`. In the sidebar, set **API address*
 
 Or set the address before starting:
 ```bash
-set PATHSNAP_API=http://192.168.43.120:8000
+set "PATHSNAP_API=http://192.168.43.120:8000"
 ```
 ```bash
 streamlit run ui/app.py
@@ -71,7 +71,7 @@ The UI never receives the reference route: the API returns only the predicted ro
 Test on the **same network you will use at the evaluation**, and run all 10 trips once end to end (this run-check is what `python -m scripts.export_artifacts --check-eval` does on a single machine).
 To test without the evaluator trips, point the API at student_test:
 ```bash
-set PATHSNAP_EVAL_DIR=data/raw/student_test
+set "PATHSNAP_EVAL_DIR=data/raw/student_test"
 ```
 ```bash
 python -m uvicorn api.main:app --host 0.0.0.0 --port 8000

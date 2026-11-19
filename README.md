@@ -58,8 +58,6 @@ data/raw/student_test/<trip_id>/<trip_id>.{track,nodes,arcs,route}
 
 Run the stages in this order. Each one reads the previous stage's outputs.
 
-_(Commands will be filled in as each stage is implemented.)_
-
 | Stage | Command |
 |---|---|
 | EDA (stats, figures, Folium maps) | `python -m scripts.eda` |
@@ -76,6 +74,13 @@ _(Commands will be filled in as each stage is implemented.)_
 | API (Laptop 1) | `python -m uvicorn api.main:app --host 0.0.0.0 --port 8000` (see docs/DEPLOYMENT.md) |
 | UI (Laptop 2) | `streamlit run ui/app.py`, then set the API address in the sidebar |
 
+## Deployment (two laptops)
+
+Full guide: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). In short:
+
+1. **Laptop 1 (API):** put the evaluator trips in `data/eval/<trip_id>/`, then run `python -m uvicorn api.main:app --host 0.0.0.0 --port 8000`. It loads `models/lightgbm_tuned.txt` and `models/pipeline_config.json` and logs every request in the console.
+2. **Laptop 2 (UI):** run `streamlit run ui/app.py` and enter `http://<Laptop-1-IP>:8000` as the API address in the sidebar.
+3. Both laptops must be on the same network (a phone hotspot set to a **Private** network profile on Laptop 1).
 
 ## Team Members
 
