@@ -64,7 +64,7 @@ def on_page(canvas, doc):
     canvas.saveState()
     canvas.setFont("Helvetica", 8)
     canvas.setFillColor(MUTED)
-    canvas.drawString(2 * cm, 1.2 * cm, "PathSnap: Distributed Map-Matching & Route Reconstruction (UE24CS352A)")
+    canvas.drawString(2 * cm, 1.2 * cm, "PathSnap: Distributed Map-Matching & Route Reconstruction (UE24CS352A) | Team 5")
     canvas.drawRightString(A4[0] - 2 * cm, 1.2 * cm, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -238,7 +238,9 @@ def build(D):
     s += [Spacer(1, 2.2 * cm), P("PathSnap", H1),
           P("Distributed Map-Matching and Route Reconstruction", SUB),
           P("UE24CS352A Machine Learning Hackathon, PES University (RR Campus), Department of CSE", SUB),
-          Spacer(1, 0.6 * cm),
+          Spacer(1, 0.4 * cm),
+          P("<b>Team 5</b>", SUB),
+          Spacer(1, 0.2 * cm),
           table([["Name", "SRN", "Class"]] + team(), [7 * cm, 5 * cm, 2.5 * cm]),
           Spacer(1, 0.6 * cm),
           P("Repository: <font face='Courier'>https://github.com/aarush-170/pathsnap</font>. Every number, table and "

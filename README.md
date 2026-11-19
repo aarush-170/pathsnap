@@ -82,7 +82,7 @@ Full guide: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). In short:
 2. **Laptop 2 (UI):** run `streamlit run ui/app.py` and enter `http://<Laptop-1-IP>:8000` as the API address in the sidebar.
 3. Both laptops must be on the same network (a phone hotspot set to a **Private** network profile on Laptop 1).
 
-## Team Members
+## Team Members (Team 5)
 
 | Name | SRN | Class |
 |---|---|---|
